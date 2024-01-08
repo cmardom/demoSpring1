@@ -3,7 +3,9 @@ package org.iesvdm;
 import java.util.Optional;
 
 import org.iesvdm.dao.ClienteDAO;
+import org.iesvdm.dao.ComercialDAO;
 import org.iesvdm.modelo.Cliente;
+import org.iesvdm.modelo.Comercial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +19,10 @@ public class SpringBootWebMvcJdbcVentasApplication implements CommandLineRunner{
 
 	@Autowired
 	private ClienteDAO clienteDAO;
-	
+
+	@Autowired
+	private ComercialDAO comercialDAO;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootWebMvcJdbcVentasApplication.class, args);
 		
@@ -50,6 +55,27 @@ public class SpringBootWebMvcJdbcVentasApplication implements CommandLineRunner{
 			//Volvemos a cargar el nombre antiguo..
 			cliente.get().setNombre(nombreOld);
 			clienteDAO.update(cliente.get());
+
+			/**************************************/
+			log.info("*******************************");
+			log.info("*Prueba de arranque ComercialDAO*");
+			log.info("*******************************");
+
+			comercialDAO.getAll().forEach(c -> log.info("Comercial: {}", c));
+			int id2 = 1;
+
+			Optional<Comercial> comercial = comercialDAO.find(id2);
+			if (comercial.isPresent()){
+				log.info("Comercial {}: {}", id, comercial.get());
+				String nombreviejo = comercial.get().getNombre();
+				comercial.get().setNombre("Carmen");
+				comercialDAO.update(comercial.get());
+				comercial = comercialDAO.find(id2);
+				log.info("Comercial {}: {}", id, comercial.get());
+
+				comercial.get().setNombre(nombreviejo);
+				comercialDAO.update(comercial.get());
+			}
 			
 		}
 		
